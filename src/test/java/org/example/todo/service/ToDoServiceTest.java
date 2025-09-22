@@ -32,14 +32,14 @@ class ToDoServiceTest {
     @Test
     void addToDo() {
 
-        ToDo todo = ToDo.builder().id("1").description("Testing").status(Status.OPEN).build();
+        ToDoDTO tododto = ToDoDTO.builder().description("Testing").status(Status.OPEN).build();
 
         ToDoRepository mockRepo = mock(ToDoRepository.class);
-        when(mockRepo.save(todo)).thenReturn(todo);
+        when(mockRepo.save(any(ToDo.class))).thenAnswer(invocation -> invocation.getArgument(0));
         ToDoService toDoService = new ToDoService(mockRepo);
-        ToDo newTodo = toDoService.addToDo(todo);
+        ToDo newTodo = toDoService.addToDo(tododto);
         assertThat(newTodo.getDescription()).isEqualTo("Testing");
-        verify(mockRepo).save(todo);
+        verify(mockRepo).save(any(ToDo.class));
 
     }
 

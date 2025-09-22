@@ -1,11 +1,13 @@
 package org.example.todo.controller;
 
+import jakarta.validation.Valid;
 import org.example.todo.model.ToDo;
 import org.example.todo.model.ToDoDTO;
 import org.example.todo.service.ToDoService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 
@@ -20,12 +22,17 @@ public class ToDoController {
 
     @GetMapping("/todo")
     public List<ToDo> getAllToDoReq() {
-        return  toDoService.getAllRequests();
+
+        if(!toDoService.getAllRequests().isEmpty()){
+            return toDoService.getAllRequests();
+        }
+        else
+            throw new NoSuchElementException("Keine ToDo liste gefunden");
     }
 
     @PostMapping("/todo")
-    public ToDo addToDo(@RequestBody ToDo toDo)  {
-        return  toDoService.addToDo(toDo);
+    public ToDo addToDo(@Valid @RequestBody ToDoDTO toDoDto)  {
+        return  toDoService.addToDo(toDoDto);
     }
 
     @GetMapping("/todo/{id}")
@@ -35,7 +42,7 @@ public class ToDoController {
         if(toDotOpt.isPresent()){
             return toDotOpt.get();
         }
-        throw new RuntimeException("ToDo mit ID: " + id + " nicht verfügbar");
+        throw new NoSuchElementException("ToDo mit ID: " + id + " nicht verfügbar");
     }
 
     @PutMapping("/todo/{id}")
@@ -44,7 +51,7 @@ public class ToDoController {
         if (updatedToDo != null) {
             return updatedToDo;
         } else {
-            throw new RuntimeException("ToDo mit ID: " + id + " nicht verfügbar");
+            throw new NoSuchElementException("ToDo mit ID: " + id + " nicht verfügbar");
         }
     }
 

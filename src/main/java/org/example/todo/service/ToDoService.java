@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class ToDoService {
@@ -18,11 +19,14 @@ public class ToDoService {
         this.toDoRepository = toDoRepository;
     }
 
+
     public List<ToDo> getAllRequests() {
         return toDoRepository.findAll();
     }
 
-    public ToDo addToDo(ToDo toDo) {
+    public ToDo addToDo(ToDoDTO toDoDto) {
+        String id = UUID.randomUUID().toString();
+        ToDo toDo = ToDo.builder().id(id).description(toDoDto.getDescription()).status(toDoDto.getStatus()).build();
         return toDoRepository.save(toDo);
     }
 
