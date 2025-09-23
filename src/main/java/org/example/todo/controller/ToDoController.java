@@ -22,7 +22,6 @@ public class ToDoController {
 
     @GetMapping("/todo")
     public List<ToDo> getAllToDoReq() {
-
         if(!toDoService.getAllRequests().isEmpty()){
             return toDoService.getAllRequests();
         }

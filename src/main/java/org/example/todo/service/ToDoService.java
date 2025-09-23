@@ -4,6 +4,8 @@ package org.example.todo.service;
 import org.example.todo.model.ToDo;
 import org.example.todo.model.ToDoDTO;
 import org.example.todo.repository.ToDoRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,9 +17,19 @@ import java.util.UUID;
 public class ToDoService {
 
     private final ToDoRepository toDoRepository;
-    public ToDoService(ToDoRepository toDoRepository) {
+    private ChatGPTService chatGPTService;
+
+    @Lazy
+    @Autowired
+    public void setChatGPTService(ChatGPTService chatGPTService) {
+        this.chatGPTService = chatGPTService;
+    }
+
+    public ToDoService(ToDoRepository toDoRepository ) {
         this.toDoRepository = toDoRepository;
     }
+
+
 
 
     public List<ToDo> getAllRequests() {
@@ -26,7 +38,8 @@ public class ToDoService {
 
     public ToDo addToDo(ToDoDTO toDoDto) {
         String id = UUID.randomUUID().toString();
-        ToDo toDo = ToDo.builder().id(id).description(toDoDto.getDescription()).status(toDoDto.getStatus()).build();
+        String newDescription = chatGPTService.checkSpelling(toDoDto.getDescription());
+        ToDo toDo = ToDo.builder().id(id).description(newDescription).status(toDoDto.getStatus()).build();
         return toDoRepository.save(toDo);
     }
 
